@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { TemplateUploader } from "@/components/admin/TemplateUploader";
+import { createBlankTemplate } from "@/app/actions/templates";
+import { SubmitButton } from "@/components/SubmitButton";
 import type { Template } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -20,8 +22,19 @@ export default async function AdminTemplatesPage() {
     <main className="mx-auto max-w-6xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-slate-900">Templates</h1>
+        <form action={createBlankTemplate}>
+          <SubmitButton
+            pendingLabel="Creating…"
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            + Create blank template
+          </SubmitButton>
+        </form>
       </div>
 
+      <h2 className="mb-2 text-sm font-medium text-slate-600">
+        Add a template from a résumé PDF
+      </h2>
       <TemplateUploader />
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

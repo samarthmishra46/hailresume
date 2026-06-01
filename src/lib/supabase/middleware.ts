@@ -27,11 +27,11 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  // IMPORTANT: getUser() revalidates the token; do not run logic between
+  // getClaims() verifies the JWT locally when signing keys are enabled (no
+  // network call) and refreshes the session cookie. Do not run logic between
   // creating the client and this call.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getClaims();
+  const isAuthed = !!data?.claims;
 
   const { pathname } = request.nextUrl;
   const isProtected =
@@ -39,7 +39,7 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith("/builder") ||
     pathname.startsWith("/admin");
 
-  if (!user && isProtected) {
+  if (!isAuthed && isProtected) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);

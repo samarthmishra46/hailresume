@@ -12,7 +12,6 @@ const MODEL = "claude-sonnet-4-6";
 // object; optional fields simply stay out of `required`.
 const OUTPUT_FORMAT = {
   type: "json_schema" as const,
-  name: "resume_template",
   schema: {
     type: "object",
     additionalProperties: false,

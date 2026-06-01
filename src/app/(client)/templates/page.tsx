@@ -2,6 +2,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth";
 import { createResume } from "@/app/actions/resumes";
+import { TemplateThumbnail } from "@/components/TemplateThumbnail";
+import { SubmitButton } from "@/components/SubmitButton";
 import type { Template } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +15,7 @@ export default async function TemplatesPage() {
   const [{ data: templateRows }, { data: resumeRows }] = await Promise.all([
     supabase
       .from("templates")
-      .select("id, name, schema")
+      .select("id, name, schema, html_template")
       .eq("status", "published")
       .order("updated_at", { ascending: false }),
     supabase
@@ -25,7 +27,7 @@ export default async function TemplatesPage() {
 
   const templates = (templateRows ?? []) as Pick<
     Template,
-    "id" | "name" | "schema"
+    "id" | "name" | "schema" | "html_template"
   >[];
   const resumes = (resumeRows ?? []) as {
     id: string;
@@ -74,23 +76,32 @@ export default async function TemplatesPage() {
             {templates.map((t) => (
               <div
                 key={t.id}
-                className="flex flex-col rounded-xl border border-slate-200 bg-white p-5"
+                className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white"
               >
-                <h3 className="font-medium text-slate-900">{t.name}</h3>
-                <p className="mt-1 flex-1 text-sm text-slate-500">
-                  {t.schema.sections.map((s) => s.label).join(" · ")}
-                </p>
-                <form
-                  action={async () => {
-                    "use server";
-                    await createResume(t.id);
-                  }}
-                  className="mt-4"
-                >
-                  <button className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
-                    Use this template
-                  </button>
-                </form>
+                <TemplateThumbnail
+                  htmlTemplate={t.html_template}
+                  schema={t.schema}
+                />
+                <div className="flex flex-1 flex-col p-5">
+                  <h3 className="font-medium text-slate-900">{t.name}</h3>
+                  <p className="mt-1 flex-1 text-sm text-slate-500">
+                    {t.schema.sections.map((s) => s.label).join(" · ")}
+                  </p>
+                  <form
+                    action={async () => {
+                      "use server";
+                      await createResume(t.id);
+                    }}
+                    className="mt-4"
+                  >
+                    <SubmitButton
+                      pendingLabel="Creating…"
+                      className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+                    >
+                      Use this template
+                    </SubmitButton>
+                  </form>
+                </div>
               </div>
             ))}
           </div>

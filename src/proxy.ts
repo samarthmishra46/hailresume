@@ -7,8 +7,10 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Run on all routes except static assets and image optimization.
+  // Only run session refresh on real page navigations. Skip static assets, image
+  // optimization, API routes (they authenticate themselves), and the auth
+  // callback — this avoids an extra Supabase round-trip on every such request.
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/|auth/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

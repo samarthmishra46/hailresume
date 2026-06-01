@@ -16,19 +16,16 @@ export default async function BuilderPage({
   await requireUser();
   const supabase = await createClient();
 
-  // RLS ensures the user can only read their own resume.
+  // One round-trip: fetch the resume with its template embedded (PostgREST join).
+  // RLS still applies to both (own resume; published/admin template).
   const { data: resume } = await supabase
     .from("resumes")
-    .select("*")
+    .select("*, template:templates(*)")
     .eq("id", resumeId)
     .single();
   if (!resume) notFound();
 
-  const { data: template } = await supabase
-    .from("templates")
-    .select("*")
-    .eq("id", (resume as Resume).template_id)
-    .single();
+  const template = (resume as Resume & { template: Template | null }).template;
   if (!template) notFound();
 
   return (

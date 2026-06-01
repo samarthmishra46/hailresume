@@ -1,35 +1,44 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/types";
 
-// Returns the current auth user, or null. Use in Server Components/Actions.
-export async function getUser() {
+// Verify and decode the session JWT. With Supabase JWT signing keys enabled this
+// happens LOCALLY (no network round-trip) — far faster than getUser(), which
+// calls the Auth server every time. cache() dedupes it within a single render.
+export const getClaims = cache(async () => {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
-}
+  const { data } = await supabase.auth.getClaims();
+  return data?.claims ?? null;
+});
 
-// Returns the current user's profile (incl. role), or null.
-export async function getProfile(): Promise<Profile | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+// Current user's id + email from the verified claims, or null.
+export const getSessionUser = cache(async () => {
+  const claims = await getClaims();
+  if (!claims) return null;
+  return {
+    id: claims.sub as string,
+    email: (claims.email as string | undefined) ?? null,
+  };
+});
+
+// Current user's profile (incl. role). One DB query, deduped per render.
+export const getProfile = cache(async (): Promise<Profile | null> => {
+  const user = await getSessionUser();
   if (!user) return null;
 
+  const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single();
   return (data as Profile) ?? null;
-}
+});
 
 // Guard for client-area pages: redirects to /login when signed out.
 export async function requireUser() {
-  const user = await getUser();
+  const user = await getSessionUser();
   if (!user) redirect("/login");
   return user;
 }

@@ -16,12 +16,20 @@ export function AppHeader({ profile }: { profile: Profile | null }) {
             Templates
           </Link>
           {profile?.role === "admin" && (
-            <Link
-              href="/admin/templates"
-              className="text-slate-600 hover:text-slate-900"
-            >
-              Admin
-            </Link>
+            <>
+              <Link
+                href="/admin/templates"
+                className="text-slate-600 hover:text-slate-900"
+              >
+                Admin
+              </Link>
+              <Link
+                href="/admin/messages"
+                className="text-slate-600 hover:text-slate-900"
+              >
+                Messages
+              </Link>
+            </>
           )}
           {profile && (
             <div className="flex items-center gap-3">
