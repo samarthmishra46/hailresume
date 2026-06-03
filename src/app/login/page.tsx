@@ -1,8 +1,10 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { SERVICES } from "@/lib/services";
 
 function LoginInner() {
   const params = useSearchParams();
@@ -24,29 +26,89 @@ function LoginInner() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
-        <h1 className="text-center text-2xl font-semibold text-slate-900">
-          Resume Builder
-        </h1>
-        <p className="mt-2 text-center text-sm text-slate-500">
-          Sign in to build and download your resume.
-        </p>
+    <main className="grid min-h-screen lg:grid-cols-2">
+      {/* Brand / value panel */}
+      <aside className="relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-emerald-600 to-emerald-800 p-12 text-white lg:flex">
+        <Link href="/" className="text-2xl font-bold tracking-tight">
+          Hail<span className="text-emerald-200">Resume</span>
+        </Link>
 
-        {hadError && (
-          <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-center text-sm text-red-600">
-            Sign-in failed. Please try again.
+        <div>
+          <h2 className="text-3xl font-bold leading-tight">
+            Your whole job-search toolkit, in one place.
+          </h2>
+          <p className="mt-3 max-w-md text-emerald-50">
+            Sign in to unlock every HailResume tool — your work stays saved to
+            your account.
           </p>
-        )}
 
-        <button
-          onClick={signIn}
-          disabled={loading}
-          className="mt-6 flex w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
-        >
-          <GoogleIcon />
-          {loading ? "Redirecting…" : "Continue with Google"}
-        </button>
+          <ul className="mt-8 space-y-3">
+            {SERVICES.map((s) => (
+              <li key={s.slug} className="flex items-start gap-3">
+                <span className="text-xl">{s.emoji}</span>
+                <div>
+                  <p className="font-semibold">{s.name}</p>
+                  <p className="text-sm text-emerald-100">{s.tagline}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <p className="text-sm text-emerald-200">
+          Free to start · No credit card required
+        </p>
+      </aside>
+
+      {/* Sign-in panel */}
+      <div className="flex flex-col items-center justify-center bg-slate-50 px-4 py-12">
+        <div className="w-full max-w-sm">
+          <Link
+            href="/"
+            className="mb-8 inline-block text-lg font-bold tracking-tight text-emerald-700 lg:hidden"
+          >
+            Hail<span className="text-slate-900">Resume</span>
+          </Link>
+
+          <div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
+            <h1 className="text-2xl font-semibold text-slate-900">Welcome</h1>
+            <p className="mt-2 text-sm text-slate-500">
+              Sign in to build resumes, score them against jobs, and generate
+              cover letters.
+            </p>
+
+            {hadError && (
+              <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                Sign-in failed. Please try again.
+              </p>
+            )}
+
+            <button
+              onClick={signIn}
+              disabled={loading}
+              className="mt-6 flex w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-60"
+            >
+              <GoogleIcon />
+              {loading ? "Redirecting…" : "Continue with Google"}
+            </button>
+
+            <p className="mt-6 text-center text-xs text-slate-400">
+              By continuing you agree to our terms. We only use your Google
+              account to sign you in.
+            </p>
+          </div>
+
+          <p className="mt-6 text-center text-sm text-slate-500">
+            Just looking around?{" "}
+            <Link href="/about" className="font-medium text-emerald-700 hover:underline">
+              About
+            </Link>{" "}
+            ·{" "}
+            <Link href="/contact" className="font-medium text-emerald-700 hover:underline">
+              Contact
+            </Link>
+          </p>
+        </div>
       </div>
     </main>
   );

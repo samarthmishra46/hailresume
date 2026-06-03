@@ -51,9 +51,20 @@ export async function requireAdmin(): Promise<Profile> {
   return profile;
 }
 
-type AdminApiResult =
+type ApiAuthResult =
   | { ok: true; userId: string }
   | { ok: false; status: number; error: string };
+
+// Guard for API routes that any signed-in user may call. Returns a typed result
+// instead of redirecting (route handlers return JSON, not redirects).
+export async function requireUserApi(): Promise<ApiAuthResult> {
+  const user = await getSessionUser();
+  if (!user)
+    return { ok: false, status: 401, error: "Please sign in to use this feature." };
+  return { ok: true, userId: user.id };
+}
+
+type AdminApiResult = ApiAuthResult;
 
 // Guard for API routes: returns a typed result instead of redirecting.
 export async function requireAdminApi(): Promise<AdminApiResult> {

@@ -31,7 +31,7 @@ export const SERVICES: Service[] = [
     description:
       "Upload your resume and get a clear score plus line-by-line suggestions modeled on what top recruiters look for.",
     href: "/resume-review",
-    status: "soon",
+    status: "live",
     emoji: "🔍",
   },
   {
@@ -41,7 +41,7 @@ export const SERVICES: Service[] = [
     description:
       "Paste a job posting and we'll flag missing keywords and skills so your resume sails through applicant tracking systems.",
     href: "/ats-score",
-    status: "soon",
+    status: "live",
     emoji: "📊",
   },
   {
@@ -51,7 +51,7 @@ export const SERVICES: Service[] = [
     description:
       "Turn your resume and a job description into a polished, personalized cover letter you can edit and download.",
     href: "/cover-letter",
-    status: "soon",
+    status: "live",
     emoji: "✉️",
   },
   {

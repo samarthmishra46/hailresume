@@ -23,7 +23,7 @@ export function MarketingHeader({ loggedIn }: { loggedIn: boolean }) {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
           <span className="text-xl font-bold tracking-tight text-emerald-700">
-            Hail<span className="text-slate-900">Resume</span>
+            hail<span className="text-slate-900">Resume</span>
           </span>
         </Link>
 
